@@ -175,7 +175,7 @@ grid on
 
 
 for n=1:N-1
-figure(5); plot(t(1:end-1),U(:,n)./9.806); hold on
+figure(5); plot(t(2:end),U(:,n)./9.806); hold on
 end
 title('Accelerations');
 xlabel('Time (s)');
@@ -184,3 +184,36 @@ legend('show')
 grid on
 
 
+%% Energy Calculation
+
+cn = 4;
+
+% pos = X(2:end,-1+2*cn);
+dpr = X(2:end,-1+2*cn) - X(2:end,-1+2*(cn-1)) - d;
+dpf = X(2:end,-1+2*(cn+1)) - X(2:end,-1+2*cn) - d;
+vel = X(2:end,2*cn);
+pos = dpr - dpf;
+acc = U(:,cn);
+
+Wnsquare = 0;
+
+en = Wnsquare.*0.5.*pos.^2 + kdi.*0.5.*vel.^2;
+en_dot =  Wnsquare.*vel.*pos + kdi.*vel.*acc ;
+
+% for n=1:N-1
+figure(6); plot(t(2:end),en); hold on
+% end
+title('Energy');
+xlabel('Time (s)');
+ylabel('Energy (J/kg)');
+legend('show')
+grid on
+
+% for n=1:N-1
+figure(7); plot(t(2:end),en_dot); hold on
+% end
+title('Energy Rate');
+xlabel('Time (s)');
+ylabel('Energy rate(J/kg/s)');
+legend('show')
+grid on
