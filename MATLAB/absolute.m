@@ -5,10 +5,10 @@ close all; clc; clear;
 %% Functions
 
 kpi = 1;
-kdi = 12;
+kdi = 7;
 d = 10;
 
-N = 5; % Platoon size with Leader
+N = 6; % Platoon size with Leader
 
 R = or(mod((3:N*5-2),5)==1,mod((3:N*5-2),5)==3)' .* d; % Reference Signal
 R(end) = 22.352;
@@ -83,7 +83,7 @@ U_tilda = B*K*R;
 
 %% simulation
 
-X0  = [0 0 10 0 20 0 30 0 40 0]';
+X0  = [0 0 10 0 20 0 30 0 40 0 50 0]';
 % X0  = zeros(N*2,1);
 % X0(end) = 22.352; % 50 mph in m/s
 
@@ -108,8 +108,8 @@ for n=2:length(t)
     E(n-1,:) = (R - C*X(n-1,:)')';
     
     U(n-1,:) = (K*E(n-1,:)');
-    U(n-1,2) = U(n-1,2) - kdi*10*sin(-0*pi/2+0.1*t(n));
-    U(n-1,4) = U(n-1,4) + kdi*10*sin(0.1*t(n));
+%     U(n-1,2) = U(n-1,2) - kdi*100*sin(-0*pi/2+0.1*t(n));
+%     U(n-1,4) = U(n-1,4) + kdi*100*sin(0.1*t(n));
 %     U(n-1,:) = (K_a*E(n-1,:)');
 
     U(maxA<U)=maxA;
@@ -186,19 +186,21 @@ grid on
 
 %% Energy Calculation
 
-cn = 4;
+cn = 5;
 
 % pos = X(2:end,-1+2*cn);
 dpr = X(2:end,-1+2*cn) - X(2:end,-1+2*(cn-1)) - d;
 dpf = X(2:end,-1+2*(cn+1)) - X(2:end,-1+2*cn) - d;
+dvr = X(2:end,2*cn) - X(2:end,2*(cn-1));
+dvf = X(2:end,2*(cn+1)) - X(2:end,2*cn);
 vel = X(2:end,2*cn);
-pos = dpr - dpf;
 acc = U(:,cn);
 
-Wnsquare = 0;
+Wnsquare = kpi;
 
-en = Wnsquare.*0.5.*pos.^2 + kdi.*0.5.*vel.^2;
-en_dot =  Wnsquare.*vel.*pos + kdi.*vel.*acc ;
+en     = kpi.*0.5.*dpr.^2 + kpi.*0.5.*dpf.^2  + 0.5.*vel.^2;
+% en_dot = (kpi.*dpf - kdi).*dvf + vel.*acc + (kpi.*dpr - kdi).*dvr ;
+en_dot =  (en(2:end)-en(1:end-1))./dt;
 
 % for n=1:N-1
 figure(6); plot(t(2:end),en); hold on
@@ -210,7 +212,7 @@ legend('show')
 grid on
 
 % for n=1:N-1
-figure(7); plot(t(2:end),en_dot); hold on
+figure(7); plot(t(3:end),en_dot); hold on
 % end
 title('Energy Rate');
 xlabel('Time (s)');
