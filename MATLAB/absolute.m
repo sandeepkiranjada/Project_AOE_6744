@@ -5,7 +5,7 @@ close all; clc; clear;
 %% Functions
 
 kpi = 1;
-kdi = 7;
+kdi = 3.3;
 d = 10;
 
 N = 6; % Platoon size with Leader
@@ -174,7 +174,7 @@ legend('show')
 grid on
 
 
-for n=1:N-1
+for n=1:N
 figure(5); plot(t(2:end),U(:,n)./9.806); hold on
 end
 title('Accelerations');

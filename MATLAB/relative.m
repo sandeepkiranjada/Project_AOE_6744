@@ -8,7 +8,7 @@ kp = 1;
 kd = 3.3;
 d = 10;
 
-N = 5; % Platoon size with Leader
+N = 7; % Platoon size with Leader
 
 for n = 1:N-1
     B(n*2,n:n+1) = [-1 1];
@@ -20,6 +20,8 @@ for n=0:N-1
 end
 
 K  = K(:,3:end-2);
+K(end-1,end-1) = 0;
+K(end,:) = K(end,:).*0;
 A = diag(mod((1:N*2-3),2)==1,1)*1;
 
 %% LQR
@@ -38,9 +40,9 @@ K_a(3,3:6) = [-1 2 1 -2];
 % X0  = zeros(1,N*2);
 % X0(1,end-1:end) = [0 50];
 
-X0 = [-0 5 -0 5 -0 5 -0 5];
+X0 = [-0 0 -0 0 -0 0 -0 0 0 0 0 22.352];
 
-tfin = 100;
+tfin = 50;
 dt = 0.01;
 
 clear X t
@@ -57,9 +59,9 @@ w = 1.53;
 
 for n=2:length(t)
 %     E(n-1,:) = (R - C*X(n-1,:)')';
-%     U(n-1,:) = ((K)*X(n-1,:)');
+    U(n-1,:) = ((K)*X(n-1,:)');
 %     U(n-1,:) = ((K+K_a*a*sin(w*t(n)))*X(n-1,:)');
-    U(n-1,:) = (K_a*X(n-1,:)');
+%     U(n-1,:) = (K_a*X(n-1,:)');
 
     U(maxA<U)=maxA;
     U(minA>U)=minA;   
@@ -69,7 +71,7 @@ for n=2:length(t)
 end
 
 %% Plots
-for n=1:N-1
+for n=1:N-2
 figure(1); plot(t,X(:,(n)*2-1)+d); hold on;
 n
 end
@@ -81,7 +83,7 @@ grid on
 
 
 
-for n=1:N-1
+for n=1:N-2
 figure(2); plot(t,X(:,n*2).*2.23694); hold on
 n
 end
@@ -92,7 +94,7 @@ legend('show')
 grid on
 
 
-for n=1:N-1
+for n=1:N-2
 figure(3); plot(t(1:end-1),U(:,n)./9.806); hold on
 end
 title('Accelerations');

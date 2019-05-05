@@ -94,7 +94,7 @@ X0  = [0 0 10 0 20 0 30 0 40 0 50 0]';
 % [t,X] = ode45(@(t,X) Xdot(t,X,A_tilda,U_tilda),[0 20],X0);
 
 %% Simulation Euler-Cauchy
-tf = 150;
+tf = 50;
 dt = 0.01;
 
 clear X t
@@ -109,8 +109,10 @@ for n=2:length(t)
     E(n-1,:) = (R - C*X(n-1,:)')';
     
     U(n-1,:) = (K*E(n-1,:)');
-    U(n-1,2) = U(n-1,2) - kdi*10*cos(-0*pi/2+0.1*t(n));
-    U(n-1,4) = U(n-1,4) + kdi*10*cos(0.1*t(n));
+    U(n-1,2) = U(n-1,2) - kdi*10*t(n);
+    U(n-1,4) = U(n-1,4) + kdi*10*t(n);
+%     U(n-1,2) = U(n-1,2) - kdi*10*cos(-0*pi/2+0.1*t(n));
+%     U(n-1,4) = U(n-1,4) + kdi*10*cos(0.1*t(n));
 %     U(n-1,:) = (K_a*E(n-1,:)');
 
     U(maxA<U)=maxA;
