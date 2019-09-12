@@ -18,9 +18,10 @@ for n=0:N-2
     Xh(n*2+2,1) = Dv(n+1);
 end
 
-syms a b kp kd l d;
+syms a b kp kd l d vR;
 
 Ub = a*Dx+b*Dv-b*d;
+Ub = [Ub;b*(V(5) - vR)];
 
 T2 = inv(triu(-1*ones(N-1)));
 
